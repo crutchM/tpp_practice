@@ -1,14 +1,13 @@
 package com.example.tpp_practice.controllers;
 
+import com.example.tpp_practice.model.FileInfo;
 import com.example.tpp_practice.services.FileInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -25,6 +24,16 @@ public class RestFileController {
             Resource resource = service.download(id);
             return ResponseEntity.ok()
                     .header("Content-Disposition", "attachment; filename=" + resource.getFile().getName()).body(resource);
+
+        } catch (IOException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<FileInfo> upload(@RequestParam MultipartFile attachment, @RequestParam("path") String path){
+        try {
+            return new ResponseEntity<>(service.upload(attachment, path), HttpStatus.CREATED);
 
         } catch (IOException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
