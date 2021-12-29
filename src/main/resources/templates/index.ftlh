@@ -1,6 +1,8 @@
 <#import "parts/page.ftlh" as c>
 
 <@c.page "main page">
+
+
     <div style="display: flex">
         <div style="background-color: aqua">
             <#if files.isEmpty()>
@@ -45,8 +47,14 @@
                     </table>
             </#if>
         </div>
-        <div>
-
+        <div style="padding-left: 20px">
+            <form action="/file/mkdir" method="post">
+                <input type="text" name="name">
+                <br>
+                <input type="text" name="path">
+                <br>
+                <button type="submit">mkdir</button>
+            </form>
         </div>
     </div>
 

@@ -52,4 +52,16 @@ public class RestFileController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/mkdir")
+    public ResponseEntity<FileInfo> mkdir(@RequestParam("name") String name, @RequestParam("path") String path){
+        try {
+            var folder = service.mkdir(path, name);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add("Location", "/getfiles?path=" + folder.getPath() + "/" + folder.getName());
+            return new ResponseEntity<>(folder, httpHeaders, HttpStatus.OK);
+        } catch (IOException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

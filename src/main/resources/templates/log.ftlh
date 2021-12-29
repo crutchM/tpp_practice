@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<#import "parts/page.ftlh" as p>
+<#import "parts/tablePart.ftlh" as l>
 
-</body>
-</html>
+<@p.page "login">
+    <@l.login "/login">
+
+    </@l.login>
+    <a href="todo"> reg new usr</a>
+</@p.page>

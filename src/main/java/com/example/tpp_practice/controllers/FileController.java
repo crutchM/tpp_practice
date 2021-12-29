@@ -23,6 +23,7 @@ public class FileController {
         ArrayList<FileInfo> files = (ArrayList<FileInfo>) service.getFiles(path);
         ArrayList<ArrayList<FileInfo>> dividedFiles = divideList(files);
         model.addAttribute("files", dividedFiles);
+        model.addAttribute("path", path);
         return "index";
     }
 
