@@ -12,5 +12,6 @@ public interface FileInfoService {
     Resource download(Long id) throws IOException;
     FileInfo mkdir(String path, String name) throws IOException;
     List<FileInfo> getFiles(String path);
+    FileInfo delete(Long id) throws IOException;
 
 }

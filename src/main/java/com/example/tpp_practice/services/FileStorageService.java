@@ -73,6 +73,14 @@ public class FileStorageService implements FileInfoService{
         return repository.findByPath(path);
     }
 
+    @Override
+    public FileInfo delete(Long id) throws IOException {
+        var file = repository.getById(id);
+        Files.deleteIfExists(Path.of(file.getPath() + file.getName()));
+        repository.delete(file);
+        return file;
+    }
+
     public String getExtension(String name){
         String ext = "";
         var i = name.lastIndexOf('.');
