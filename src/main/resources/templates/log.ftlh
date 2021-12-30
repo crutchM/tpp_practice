@@ -5,5 +5,5 @@
     <@l.login "/login">
 
     </@l.login>
-    <a href="todo"> reg new usr</a>
+    <a href="http://localhost:8080/reg"> reg new usr</a>
 </@p.page>

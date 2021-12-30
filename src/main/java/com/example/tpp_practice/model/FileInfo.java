@@ -1,7 +1,7 @@
 package com.example.tpp_practice.model;
 import javax.persistence.*;
 @Entity
-@Table(name = "fileInfo")
+@Table(name = "file_info")
 
 public class FileInfo {
     @Id

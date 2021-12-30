@@ -73,11 +73,6 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.collections</groupId>
-            <artifactId>google-collections</artifactId>
-            <version>28.2-android</version>
-        </dependency>
     </dependencies>
 
     <build>

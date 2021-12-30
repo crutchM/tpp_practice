@@ -1,5 +1,8 @@
 package com.example.tpp_practice.controllers;
 
+import com.example.tpp_practice.logger.Event.Event;
+import com.example.tpp_practice.logger.Event.EventType;
+import com.example.tpp_practice.logger.EventLogger;
 import com.example.tpp_practice.model.FileInfo;
 import com.example.tpp_practice.model.User;
 import com.example.tpp_practice.services.FileInfoService;
@@ -12,18 +15,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 @Controller
 public class FileController {
     @Autowired
     FileInfoService service;
 
+    @Autowired
+    EventLogger eventLogger;
+
     @GetMapping(path = "/getFiles")
     public String mainPg(@AuthenticationPrincipal User user, @RequestParam("path") String path, Model model){
         ArrayList<FileInfo> files = (ArrayList<FileInfo>) service.getFiles(path);
-        ArrayList<ArrayList<FileInfo>> dividedFiles = divideList(files);
-        model.addAttribute("files", dividedFiles);
+        //ArrayList<ArrayList<FileInfo>> dividedFiles = divideList(files);
+        model.addAttribute("files", files);
         model.addAttribute("path", path);
+        eventLogger.logEvent(Event.level(EventType.INFO).that("files download successefuly"));
         return "index";
     }
 
@@ -33,7 +41,7 @@ public class FileController {
         ArrayList<ArrayList<FileInfo>> result = new ArrayList<>();
         ArrayList<FileInfo> subResult = new ArrayList<>();
         if(list.isEmpty())
-            return null;
+            return new ArrayList<>();
         for(var e : list){
             subResult.add(e);
             if(subResult.size() == 5){

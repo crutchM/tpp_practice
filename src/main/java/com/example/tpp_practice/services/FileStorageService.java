@@ -16,45 +16,70 @@ import java.nio.file.Path;
 import java.util.List;
 @Service
 public class FileStorageService implements FileInfoService{
-    private static final String root= "C:\\Users\\melehin_aa\\IdeaProjects\\tpp_practice\\src\\main\\resources\\files";
+    private static final String root= "/home/crutchm/Загрузки/tpp_practice/src/main/resources/files";
 
     @Autowired
     FileInfoRepository repository;
 
-    @Override
-    public FileInfo upload(MultipartFile resource, String path) throws IOException {
-        String extension = "";
-        extension = getExtension(resource.getName());
-        if(extension.equals("")){
-            extension = "folder";
-        }
-        FileInfo newFile =new FileInfo(resource.getOriginalFilename(), path, extension, resource.getSize());
-        var upl = repository.save(newFile);
-        String p = "";
+//    @Override
+//    public FileInfo upload(MultipartFile resource, String name,String path) throws IOException {
+//        String extension = "";
+//        extension = getExtension(name);
+//        if(extension.equals("")){
+//            extension = "folder";
+//        }
+//        FileInfo newFile =new FileInfo(name, path, extension, resource.getSize());
+//        var upl = repository.save(newFile);
+//        String p = "";
+//        if(path.equals("/")){
+//            p = root + path + upl.getName();
+//        } else {
+//            p = root + path + "/" + upl.getName();
+//        }
+//        File file = new File(p);
+//        file.createNewFile();
+//        FileOutputStream out = null;
+//        try {
+//            out = new FileOutputStream(file);
+//            out.write(resource.getBytes());
+//        }finally {
+//            out.close();
+//        }
+//        return upl;
+//    }
+@Override
+public FileInfo upload(MultipartFile resource, String name, String path) throws IOException {
+        System.out.println("ошибка здесь");
+        FileInfo newFile = new FileInfo(name, path, getExtension(name), resource.getSize());
+        var up = repository.save(newFile);
+        File file;
         if(path.equals("/")){
-            p = root + path + upl.getName();
-        } else {
-            p = root + path + "/" + upl.getName();
+            file = new File(root + path + up.getName());
+        }else {
+            file = new File(root + path + '/' + up.getName());
         }
-        File file = new File(p);
-        file.createNewFile();
         FileOutputStream out = null;
         try {
-            out = new FileOutputStream(file);
+            out = new FileOutputStream(root + path + '/' + up.getName());
             out.write(resource.getBytes());
-        }finally {
+        } finally {
             out.close();
         }
-        return upl;
-    }
+        return up;
+}
 
     @Override
     public Resource download(Long id) throws IOException {
-        FileInfo foundedFile = repository.getById(id);
-        Resource resource = new UrlResource(root + foundedFile.getPath() + "/" + foundedFile.getName());
-        if(resource.exists() || resource.isReadable()){
+        var file = repository.getById(id);
+        Path path;
+        if (file.getPath().equals("/"))
+            path = Path.of(root + file.getPath() + file.getName());
+        else {
+            path = Path.of(root + file.getPath() + '/' + file.getName());
+        }
+        Resource resource = new UrlResource(path.toUri());
+        if(resource.exists() || resource.isReadable()) {
             return resource;
-
         } else {
             throw new IOException();
         }
@@ -75,8 +100,9 @@ public class FileStorageService implements FileInfoService{
 
     @Override
     public FileInfo delete(Long id) throws IOException {
-        var file = repository.getById(id);
-        Files.deleteIfExists(Path.of(file.getPath() + file.getName()));
+        FileInfo file = repository.findById(id).get();
+        var p = root + file.getPath() + file.getName();
+        boolean b = Files.deleteIfExists(Path.of(p));
         repository.delete(file);
         return file;
     }
