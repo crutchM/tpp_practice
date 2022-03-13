@@ -1,5 +1,7 @@
 package com.example.tpp_practice.model;
 import javax.persistence.*;
+import java.util.Date;
+
 @Entity
 @Table(name = "file_info")
 
@@ -18,6 +20,7 @@ public class FileInfo {
     private long size;
     @Column(name="user_id")
     private Long userId;
+    private Date date;
 
 
     public FileInfo(String name, String path, String extension, long size){
@@ -25,7 +28,7 @@ public class FileInfo {
         this.path = path;
         this.extension = extension;
         this.size = size;
-
+        this.date = new Date();
     }
 
     public FileInfo() {
