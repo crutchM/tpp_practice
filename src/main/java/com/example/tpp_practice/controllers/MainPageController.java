@@ -25,7 +25,8 @@ public class MainPageController {
     EventLogger eventLogger;
 
     @GetMapping(path = "/getFiles")
-    public String showSortedFiles(@AuthenticationPrincipal User user, @RequestParam("path") String path, Integer sortMode, Model model){
+    public String showSortedFiles(@AuthenticationPrincipal User user, @RequestParam("path") String path,
+                                  @RequestParam("mode") Integer sortMode, Model model){
         SortOptions option = null;
         switch (sortMode){
             case 1:
@@ -53,6 +54,6 @@ public class MainPageController {
         ArrayList<FileInfo> files = (ArrayList<FileInfo>) service.sortFilesByDate(path, option);
         model.addAttribute("files", files);
         model.addAttribute("path", path);
-        return "index";
+        return "double";
     }
 }

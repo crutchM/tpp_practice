@@ -1,5 +1,6 @@
 <#import "parts/page.ftlh" as c>
-
+<#import "parts/mkdir.ftlh" as mk>
+<#import "parts/upload.ftlh" as upl>
 <@c.page "main page">
     <h1>${path}</h1>
     <div style="display: flex">
@@ -46,31 +47,13 @@
                     </table>
             </#if>
         </div>
-        <div style="padding-left: 20px">
-            create new dir
-            <form action="/file/mkdir" method="post">
-                <input type="text" name="name">
-                <br>
-                <input type="hidden" name="path" value="${path}">
-                <input type="hidden" name="_csrf" value="${ _csrf.token }"/>
-                <br>
-                <button type="submit">mkdir</button>
-            </form>
-        </div>
-        <div style="padding-left: 20px;">
-            <form method="post" enctype="multipart/form-data" action="/file/upload">
-                <input type="hidden" name="path" value="${path}">
-                <input type="hidden" name="_csrf" value="${ _csrf.token }"/>
-                <br>
-                File to upload <input type="file" name="attachment">
-                <br>
-                <input type="text" name="name">
-                <br>
-                <button type="submit"> upload</button>
-            </form>
+        <@mk.mkdir "${path}", "${_csrf.token}">
 
+        </@mk.mkdir>
 
-        </div>
+       <@upl.upload "${path}", "${_csrf.token}">
+
+       </@upl.upload>
     </div>
 
 </@c.page>

@@ -38,8 +38,8 @@ public class FileController {
         }
     }
 
-    @PostMapping("/update/{id}")
-    public ResponseEntity<Boolean> updateFile(@PathVariable("id") Long id, @RequestParam("newName") String newName){
+    @PostMapping("/update")
+    public ResponseEntity<Boolean> updateFile(@RequestParam("id") Long id, @RequestParam("newName") String newName){
         var result =service.update(id, newName);
         if(result){
             return  new ResponseEntity<>(HttpStatus.OK);
