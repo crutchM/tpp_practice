@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 @Service
 public class FileStorageService implements FileInfoService{
-    private static final String root= "/home/crutchm/Загрузки/tpp_practice/src/main/resources/files";
+    private static final String root= "src/main/resources/stash";
 
     @Autowired
     FileInfoRepository repository;

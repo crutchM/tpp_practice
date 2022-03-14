@@ -54,6 +54,7 @@ public class MainPageController {
         ArrayList<FileInfo> files = (ArrayList<FileInfo>) service.sortFilesByDate(path, option);
         model.addAttribute("files", files);
         model.addAttribute("path", path);
+        model.addAttribute("mode", sortMode);
         return "double";
     }
 }

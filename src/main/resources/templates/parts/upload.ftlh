@@ -1,7 +1,8 @@
-<#macro upload path, token>
+<#macro upload path, token, mode>
     <div style="padding-left: 20px;">
         <form method="post" enctype="multipart/form-data" action="/file/upload">
             <input type="hidden" name="path" value="${path}">
+            <input type="hidden" name="mode" value="${mode}">
             <input type="hidden" name="_csrf" value="${ token }"/>
             <br>
             File to upload <input type="file" name="attachment">

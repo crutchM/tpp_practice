@@ -48,11 +48,11 @@ public class FileController {
 
 
     @PostMapping("/upload")
-    public ResponseEntity<FileInfo> upload(@RequestParam MultipartFile attachment, @RequestParam("name") String name, @RequestParam("path") String path){
+    public ResponseEntity<FileInfo> upload(@RequestParam MultipartFile attachment, @RequestParam("name") String name, @RequestParam("path") String path, @RequestParam("mode") Integer sortMode){
         try {
             var file =service.upload(attachment, name, path);
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", "/getFiles?path=" + file.getPath());
+            headers.add("Location", "/getFiles?path=" + file.getPath() + "&mode=" + sortMode);
             eventLogger.logEvent(Event.level(EventType.INFO).that("file: " + name + " successfully added on drive by path " + path));
             return new ResponseEntity<>(file, headers, HttpStatus.FOUND);
         } catch (IOException e){

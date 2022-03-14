@@ -1,13 +1,13 @@
 <#import "parts/page.ftlh" as p>
 <#import "parts/mkdir.ftlh" as mk>
 <#import "parts/upload.ftlh" as upl>
+
 <@p.page "main page">
     <h1>${path}</h1>
-    <h1><a href= "/getFiles/?path=${path}/..">UP</a></h1>
+<#--    <h1><a href= "/getFiles/?path=${path}/..&mode=${mode}">UP</a></h1>-->
     <div style="display: flex">
-        <div style="height: 1000px; width: 300px;">
+        <div style="height: 1000px; width: 300px">
             <#if files.size() == 0>
-                <h2>Пусто</h2>
                 <table>
 
                 </table>
@@ -30,11 +30,11 @@
                                         ${f.getName()}
                                     </a>
                                 <#elseif f.getPath() == "/">
-                                    <a href="/getFiles?path=${f.getPath()}${f.getName()}">
+                                    <a href="/getFiles?path=${f.getPath()}${f.getName()}&mode=${mode}">
                                         ${f.getName()}
                                     </a>
                                 <#elseif f.getPath() != "/">
-                                    <a href="/getFiles?path=${f.getPath()}${f.getName()}">
+                                    <a href="/getFiles?path=${f.getPath()}${f.getName()}&mode=${mode}">
                                         ${f.getName()}
                                     </a>
                                 </#if>
@@ -50,7 +50,7 @@
 
         </@mk.mkdir>
 
-        <@upl.upload "${path}", "${_csrf.token}">
+        <@upl.upload "${path}", "${_csrf.token}", "${mode}">
 
         </@upl.upload>
     </div>
