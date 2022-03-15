@@ -14,7 +14,7 @@
     <name>tpp_practice</name>
     <description>tpp_practice</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
         <dependency>

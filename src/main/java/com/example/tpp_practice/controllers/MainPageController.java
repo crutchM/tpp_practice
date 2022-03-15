@@ -55,6 +55,7 @@ public class MainPageController {
         model.addAttribute("files", files);
         model.addAttribute("path", path);
         model.addAttribute("mode", sortMode);
+        model.addAttribute("listSize", files.size());
         return "double";
     }
 }

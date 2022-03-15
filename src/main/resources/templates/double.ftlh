@@ -4,10 +4,10 @@
 
 <@p.page "main page">
     <h1>${path}</h1>
-<#--    <h1><a href= "/getFiles/?path=${path}/..&mode=${mode}">UP</a></h1>-->
+    <h1><a href= "/getFiles/?path=${path}/..&mode=${mode}">UP</a></h1>
     <div style="display: flex">
         <div style="height: 1000px; width: 300px">
-            <#if files.size() == 0>
+            <#if listSize == 0>
                 <table>
 
                 </table>
