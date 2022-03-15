@@ -5,6 +5,7 @@ import com.example.tpp_practice.model.SortOptions;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface FileInfoService {
     FileInfo delete(Long id) throws IOException;
     List<FileInfo> sortFilesByDate(String path, SortOptions option);
     FileInfo update(Long id, String newName) throws IOException;
+    FileInfo move(Long id, String dest) throws IOException;
+    FileInfo getFile(Long id);
 }

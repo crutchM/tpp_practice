@@ -80,6 +80,7 @@ public class FIleTest {
                 .with(csrf());
         this.mockMvc.perform(mul)
                 .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(redirectedUrl("/getFiles?path=/fld&mode=1&up=1"));
     }
 
@@ -92,6 +93,7 @@ public class FIleTest {
                 .with(csrf());
         this.mockMvc.perform(mul)
                 .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(redirectedUrl("/getFiles?path=/&mode=1&up=1&attribute=redirectWithRedirectView"));
     }
 

@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 @Service
@@ -112,6 +113,34 @@ public FileInfo upload(MultipartFile resource, String name, String path) throws 
         } else {
             throw new IOException();
         }
+    }
+
+    @Override
+    public FileInfo move(Long id, String dest) throws IOException {
+        var file = repository.findById(id).get();
+        Path result = null;
+        if (file.getPath().equals("/")){
+            throw new IOException();
+        }
+        try {
+            result = Files.move(Paths.get(root + "/" + file.getPath() + file.getName() + "." + file.getExtension()),
+                    Paths.get(root + "/" + dest + file.getName() + "." + file.getExtension()));
+        } catch (IOException e){
+            throw new IOException();
+        }
+        if(result != null){
+            repository.deleteById(file.getId());
+            file.setPath(dest);
+            repository.save(file);
+            return file;
+        } else {
+            throw new IOException();
+        }
+    }
+
+    @Override
+    public FileInfo getFile(Long id) {
+        return repository.findById(id).get();
     }
 
     public String getExtension(String name){

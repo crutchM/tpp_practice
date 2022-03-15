@@ -28,35 +28,59 @@ public class FileController {
     @Autowired
     private EventLogger eventLogger;
 
+    @PostMapping("/move")
+    public RedirectView moveFile(@RequestParam("id") Long id, @RequestParam("dir") String dirName){
+        try {
+            var dist = "";
+            if(dirName.equals("up")){
+                dist = moveUp(service.getFile(id).getPath());
+            } else {
+                dist = dirName;
+            }
+            var movedFIle = service.move(id, dist);
+            eventLogger.logEvent(Event.level(EventType.WARN).that("/move: success"));
+            var rv = new RedirectView("/getFiles?path="+ movedFIle.getPath() + "&mode=1&up=1");
+            rv.setStatusCode(HttpStatus.FOUND);
+            return rv;
+        } catch (IOException e){
+            eventLogger.logEvent(Event.level(EventType.WARN).that("/move: can't find directory"));
+            var rv = new RedirectView("/getFiles?path="+ service.getFile(id).getPath() + "&mode=1&up=1");
+            rv.setStatusCode(HttpStatus.NOT_FOUND);
+            return rv;
+        }
+    }
+
     @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> download(@PathVariable("id") Long id) throws IOException {
         try {
             Resource file = service.download(id);
             HttpHeaders headers = new HttpHeaders();
-            eventLogger.logEvent(Event.level(EventType.INFO).that("trying to download file"));
+            eventLogger.logEvent(Event.level(EventType.INFO).that("/download: trying to download file"));
             return ResponseEntity.ok().header("Content-Disposition", "attachment;").body(file);
         } catch (IOException e){
-            eventLogger.logEvent(Event.level(EventType.WARN).that("error, can't find file"));
+            eventLogger.logEvent(Event.level(EventType.WARN).that("/download: error, can't find file"));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/update")
     public RedirectView updateFile(@RequestParam("id") Long id, @RequestParam("newName") String newName,
-                                   @RequestParam("path") String path, RedirectAttributes attrs) throws IOException{
+                                   @RequestParam("path") String path) throws IOException{
         try {
 
 
             var result = service.update(id, newName);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "/getFiles?path=" + path + "&mode=1" + "&up=1");
-            eventLogger.logEvent(Event.level(EventType.INFO).that("filename changed"));
-            attrs.addFlashAttribute("flashAttribute", "redirectWithRedirectView");
-            attrs.addAttribute("attribute", "redirectWithRedirectView");
-            return new RedirectView("/getFiles?path=" + path + "&mode=1" + "&up=1");
+            eventLogger.logEvent(Event.level(EventType.INFO).that("/update:filename changed"));
+            var rv = new RedirectView("/getFiles?path=" + path + "&mode=1" + "&up=1");
+            rv.setStatusCode(HttpStatus.OK);
+            return rv;
         } catch (IOException e){
-            eventLogger.logEvent(Event.level(EventType.WARN).that("can't change filename"));
-            return new RedirectView("/getFiles?path=" + path + "&mode=1" + "&up=1");
+            eventLogger.logEvent(Event.level(EventType.WARN).that("/update: can't change filename"));
+            var rv =new RedirectView("/getFiles?path=" + path + "&mode=1" + "&up=1");
+            rv.setStatusCode(HttpStatus.CONFLICT);
+            return rv;
         }
     }
 
@@ -68,10 +92,10 @@ public class FileController {
             var file =service.upload(attachment, name, path);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "/getFiles?path=" + file.getPath() + "&mode=" + sortMode+"&up=1");
-            eventLogger.logEvent(Event.level(EventType.INFO).that("file: " + name + " successfully added on drive by path " + path));
+            eventLogger.logEvent(Event.level(EventType.INFO).that("/upload: file: " + name + " successfully added on drive by path " + path));
             return new ResponseEntity<>(file, headers, HttpStatus.FOUND);
         } catch (IOException e){
-            eventLogger.logEvent(Event.level(EventType.WARN).that("can't upload a file"));
+            eventLogger.logEvent(Event.level(EventType.WARN).that("/upload: can't upload a file"));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -82,10 +106,10 @@ public class FileController {
             var file = service.delete(id);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("Location", "/getFiles?path=" + file.getPath() + "&mode=1"+"&up=1");
-            eventLogger.logEvent(Event.level(EventType.INFO).that("file " + file.getName() + " successfully deleted"));
+            eventLogger.logEvent(Event.level(EventType.INFO).that("/delete: file " + file.getName() + " successfully deleted"));
             return new ResponseEntity<>(file, httpHeaders, HttpStatus.FOUND);
         } catch (IOException e){
-            eventLogger.logEvent(Event.level(EventType.WARN).that("can't find or delete file"));
+            eventLogger.logEvent(Event.level(EventType.WARN).that("/delete: can't find or delete file"));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -96,14 +120,27 @@ public class FileController {
             var folder = service.mkdir(path, name);
             //HttpHeaders httpHeaders = new HttpHeaders();
            //httpHeaders.add("Location", "/getFiles?path=" + path + "/" + name + "&mode=1"+"&up=1");
-            eventLogger.logEvent(Event.level(EventType.INFO).that("directory " + folder.getName() + " successfully added"));
+            eventLogger.logEvent(Event.level(EventType.INFO).that("/mkdir: directory " + folder.getName() + " successfully added"));
             //return new ResponseEntity<>(folder, httpHeaders, HttpStatus.OK);
-
-            return new RedirectView("/getFiles?path=" + folder.getPath()+ folder.getName() + "&mode=1"+"&up=1");
+            var rv = new RedirectView("/getFiles?path=" + folder.getPath()+ folder.getName() + "&mode=1"+"&up=1");
+            rv.setStatusCode(HttpStatus.OK);
+            return rv;
         } catch (IOException e){
-            eventLogger.logEvent(Event.level(EventType.WARN).that("can't create a folder: " + name));
+            eventLogger.logEvent(Event.level(EventType.WARN).that("/mkdir: can't create a folder: " + name));
             //return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            return new RedirectView("/getFiles?path=" + path +"&mode=1&up=1");
+            var rv =new RedirectView("/getFiles?path=" + path +"&mode=1&up=1");
+            rv.setStatusCode(HttpStatus.NOT_FOUND);
+            return rv;
+        }
+    }
+
+    public String moveUp(String path) {
+        var mpn = path.lastIndexOf('/');
+        var result = path.substring(0, mpn);
+        if(result.equals("")){
+            return "/";
+        } else {
+            return result;
         }
     }
 
