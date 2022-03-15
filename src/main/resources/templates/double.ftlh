@@ -4,9 +4,14 @@
 
 <@p.page "main page">
     <h1>${path}</h1>
-    <h1><a href= "/getFiles/?path=${path}/..&mode=${mode}">UP</a></h1>
+    <#if path == "/">
+        <h1>Вы в корневом каталоге, дальше некуда</h1>
+        <#else>
+            <h1><a href="/getFiles?path=${path}&mode=1&up=0">UP</a></h1>
+    </#if>
+
     <div style="display: flex">
-        <div style="height: 1000px; width: 300px">
+        <div style="height: 1000px; width: 500px; background-color: aqua">
             <#if listSize == 0>
                 <table>
 
@@ -15,6 +20,7 @@
                     <table>
                         <#list files as f>
                         <tr>
+                            <td><a>${f.getId()}</a></td>
                             <td style="height: 100px; width: 100px">
                                 <#if f.getExtension() == "png" || f.getExtension() == "jpeg">
                                     <img style="max-height: 50px; max-width: 50px" src="https://cdn.onlinewebfonts.com/svg/download_277376.png">
@@ -30,11 +36,11 @@
                                         ${f.getName()}
                                     </a>
                                 <#elseif f.getPath() == "/">
-                                    <a href="/getFiles?path=${f.getPath()}${f.getName()}&mode=${mode}">
+                                    <a href="/getFiles?path=${f.getPath()}${f.getName()}&mode=${mode}&up=1">
                                         ${f.getName()}
                                     </a>
                                 <#elseif f.getPath() != "/">
-                                    <a href="/getFiles?path=${f.getPath()}${f.getName()}&mode=${mode}">
+                                    <a href="/getFiles?path=${f.getPath()}${f.getName()}&mode=${mode}&up=1">
                                         ${f.getName()}
                                     </a>
                                 </#if>
@@ -46,13 +52,34 @@
                     </table>
             </#if>
         </div>
-        <@mk.mkdir "${path}", "${_csrf.token}">
+        <div>
+            <div>
+            <@mk.mkdir "${path}", "${_csrf.token}">
 
-        </@mk.mkdir>
+            </@mk.mkdir>
+            <br>
+            <@upl.upload "${path}", "${_csrf.token}", "${mode}">
 
-        <@upl.upload "${path}", "${_csrf.token}", "${mode}">
+            </@upl.upload>
+            </div>
+            <br>
+            <div style="padding-left: 20px">
+                <br>
+                <form action="/file/update" method="post">
+                    <label>
+                        <input type="number" name="id">
+                    </label>
+                    <br>
+                    <label>
+                        <input type="text" name="newName">
+                    </label>
+                    <input type="hidden" name="path" value="${path}">
+                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+                    <br>
+                    <button type="submit">update chosen file</button>
+                </form>
+            </div>
+        </div>
 
-        </@upl.upload>
     </div>
-
 </@p.page>

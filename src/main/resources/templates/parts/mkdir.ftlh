@@ -6,7 +6,6 @@
             <br>
             <input type="hidden" name="path" value="${path}">
             <input type="hidden" name="_csrf" value="${ token }"/>
-            <br>
             <button type="submit">mkdir</button>
         </form>
     </div>

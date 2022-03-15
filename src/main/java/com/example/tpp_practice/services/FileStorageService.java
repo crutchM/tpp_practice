@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 @Service
 public class FileStorageService implements FileInfoService{
-    private static final String root= "src/main/resources/stash";
+    private static final String root= "D:\\node\\java\\tpp\\src\\main\\resources\\stash";
 
     @Autowired
     FileInfoRepository repository;
@@ -100,17 +100,17 @@ public FileInfo upload(MultipartFile resource, String name, String path) throws 
     }
 
     @Override
-    public boolean update(Long id, String newName) {
-        FileInfo file = repository.getById(id);
-        file.setName(newName);
+    public FileInfo update(Long id, String newName) {
+        FileInfo file = repository.findById(id).get();
         File f = new File(file.getPath() + file.getName() + '.' + file.getExtension());
+        file.setName(newName);
         File fn = new File(file.getPath() + newName + '.' + file.getExtension());
         if(f.renameTo(fn)) {
             repository.deleteById(id);
             repository.save(file);
-            return true;
+            return file;
         } else {
-            return false;
+            return null;
         }
     }
 

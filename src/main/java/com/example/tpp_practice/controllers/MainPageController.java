@@ -8,12 +8,16 @@ import com.example.tpp_practice.model.SortOptions;
 import com.example.tpp_practice.model.User;
 import com.example.tpp_practice.services.FileInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 @Controller
@@ -24,9 +28,9 @@ public class MainPageController {
     @Autowired
     EventLogger eventLogger;
 
-    @GetMapping(path = "/getFiles")
+    @RequestMapping(value = "/getFiles", method = RequestMethod.GET)
     public String showSortedFiles(@AuthenticationPrincipal User user, @RequestParam("path") String path,
-                                  @RequestParam("mode") Integer sortMode, Model model){
+                                  @RequestParam("mode") Integer sortMode, Model model, @RequestParam("up") Integer up) throws IOException {
         SortOptions option = null;
         switch (sortMode){
             case 1:
@@ -51,11 +55,37 @@ public class MainPageController {
                 option = SortOptions.SIZE_DESCENDING;
                 break;
         }
-        ArrayList<FileInfo> files = (ArrayList<FileInfo>) service.sortFilesByDate(path, option);
+        var upPath = "";
+        if(up == 0){
+             upPath= moveUp(path);
+        } else {
+            upPath = path;
+        }
+        ArrayList<FileInfo> files = (ArrayList<FileInfo>) service.sortFilesByDate(upPath, option);
         model.addAttribute("files", files);
-        model.addAttribute("path", path);
+        model.addAttribute("path", upPath);
         model.addAttribute("mode", sortMode);
         model.addAttribute("listSize", files.size());
         return "double";
+    }
+
+    public String moveUp(String path) {
+        var splited = path.split("/");
+        var mpn = path.lastIndexOf('/');
+        var result = path.substring(0, mpn);
+        if(result.equals("")){
+            return "/";
+        } else {
+            return result;
+        }
+//        StringBuilder result = new StringBuilder();
+//        for (String s : splited) {
+//            if (s.equals(splited[splited.length - 1])) {
+//                result.append("/");
+//                break;
+//            } else result.append("/").append(s);
+//        }
+//
+//        return result.toString();
     }
 }

@@ -4,7 +4,6 @@
             <input type="hidden" name="path" value="${path}">
             <input type="hidden" name="mode" value="${mode}">
             <input type="hidden" name="_csrf" value="${ token }"/>
-            <br>
             File to upload <input type="file" name="attachment">
             <br>
             <input type="text" name="name">

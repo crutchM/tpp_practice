@@ -39,11 +39,13 @@ public class FileController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<Boolean> updateFile(@RequestParam("id") Long id, @RequestParam("newName") String newName){
+    public ResponseEntity<FileInfo> updateFile(@RequestParam("id") Long id, @RequestParam("newName") String newName, @RequestParam("path") String path){
         var result =service.update(id, newName);
-        if(result){
-            return  new ResponseEntity<>(HttpStatus.OK);
-        } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location","/getFiles?path=" + path + "&mode=1"+"&up=1");
+            eventLogger.logEvent(Event.level(EventType.INFO).that("filename changed"));
+            return  new ResponseEntity<>(result, headers, HttpStatus.OK);
+
     }
 
 
@@ -52,7 +54,7 @@ public class FileController {
         try {
             var file =service.upload(attachment, name, path);
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", "/getFiles?path=" + file.getPath() + "&mode=" + sortMode);
+            headers.add("Location", "/getFiles?path=" + file.getPath() + "&mode=" + sortMode+"&up=1");
             eventLogger.logEvent(Event.level(EventType.INFO).that("file: " + name + " successfully added on drive by path " + path));
             return new ResponseEntity<>(file, headers, HttpStatus.FOUND);
         } catch (IOException e){
@@ -66,7 +68,7 @@ public class FileController {
         try {
             var file = service.delete(id);
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add("Location", "/getFiles?path=" + file.getPath());
+            httpHeaders.add("Location", "/getFiles?path=" + file.getPath() + "&mode=1"+"&up=1");
             eventLogger.logEvent(Event.level(EventType.INFO).that("file " + file.getName() + " successfully deleted"));
             return new ResponseEntity<>(file, httpHeaders, HttpStatus.FOUND);
         } catch (IOException e){
@@ -76,12 +78,12 @@ public class FileController {
     }
 
     @PostMapping("/mkdir")
-
     public ResponseEntity<FileInfo> mkdir(@RequestParam("name") String name, @RequestParam("path") String path){
         try {
             var folder = service.mkdir(path, name);
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add("Location", "/getFiles?path=" + folder.getPath()  + folder.getName() + "/");
+            httpHeaders.add("Location", "/getFiles?path=" + folder.getPath()  + folder.getName()
+                    + "/" + "&mode=1"+"&up=1");
             eventLogger.logEvent(Event.level(EventType.INFO).that("directory " + folder.getName() + " successfully added"));
             return new ResponseEntity<>(folder, httpHeaders, HttpStatus.FOUND);
         } catch (IOException e){
@@ -89,4 +91,6 @@ public class FileController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
 }
