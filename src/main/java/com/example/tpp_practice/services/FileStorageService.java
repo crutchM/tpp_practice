@@ -72,7 +72,7 @@ public FileInfo upload(MultipartFile resource, String name, String path) throws 
     @Override
     public FileInfo delete(Long id) throws IOException {
         FileInfo file = repository.findById(id).get();
-        var p = root + file.getPath() + file.getName();
+        var p = root + file.getPath() + file.getName() + "." + file.getExtension();
         boolean b = Files.deleteIfExists(Path.of(p));
         repository.delete(file);
         return file;
@@ -102,9 +102,9 @@ public FileInfo upload(MultipartFile resource, String name, String path) throws 
     @Override
     public FileInfo update(Long id, String newName) {
         FileInfo file = repository.findById(id).get();
-        File f = new File(file.getPath() + file.getName() + '.' + file.getExtension());
+        File f = new File(root + file.getPath() + file.getName() + '.' + file.getExtension());
         file.setName(newName);
-        File fn = new File(file.getPath() + newName + '.' + file.getExtension());
+        File fn = new File(root + file.getPath() + newName + '.' + file.getExtension());
         if(f.renameTo(fn)) {
             repository.deleteById(id);
             repository.save(file);

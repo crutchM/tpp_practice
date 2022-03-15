@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 
@@ -39,12 +41,14 @@ public class FileController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<FileInfo> updateFile(@RequestParam("id") Long id, @RequestParam("newName") String newName, @RequestParam("path") String path){
+    public RedirectView updateFile(@RequestParam("id") Long id, @RequestParam("newName") String newName, @RequestParam("path") String path, RedirectAttributes attrs){
         var result =service.update(id, newName);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location","/getFiles?path=" + path + "&mode=1"+"&up=1");
-            eventLogger.logEvent(Event.level(EventType.INFO).that("filename changed"));
-            return  new ResponseEntity<>(result, headers, HttpStatus.OK);
+        headers.add("Location", "/getFiles?path=" + path + "&mode=1"+"&up=1");
+        eventLogger.logEvent(Event.level(EventType.INFO).that("filename changed"));
+        attrs.addFlashAttribute("flashAttribute", "redirectWithRedirectView");
+        attrs.addAttribute("attribute", "redirectWithRedirectView");
+        return new RedirectView("/getFiles?path=" + path + "&mode=1" + "&up=1");
 
     }
 

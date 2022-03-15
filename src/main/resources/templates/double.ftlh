@@ -66,13 +66,9 @@
             <div style="padding-left: 20px">
                 <br>
                 <form action="/file/update" method="post">
-                    <label>
-                        <input type="number" name="id">
-                    </label>
+                    <input type="number" name="id">
                     <br>
-                    <label>
-                        <input type="text" name="newName">
-                    </label>
+                    <input type="text" name="newName">
                     <input type="hidden" name="path" value="${path}">
                     <input type="hidden" name="_csrf" value="${_csrf.token}">
                     <br>
