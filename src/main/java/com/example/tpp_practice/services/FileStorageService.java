@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 @Service
 public class FileStorageService implements FileInfoService{
-    private static final String root= "D:\\node\\java\\tpp\\src\\main\\resources\\stash";
+    private static final String root= "C:\\Users\\sads1\\Desktop\\tpp_practice\\src\\main\\resources\\stash";
 
     @Autowired
     FileInfoRepository repository;

@@ -12,6 +12,19 @@
 
     <div style="display: flex">
         <div style="height: 1000px; width: 500px; background-color: aqua">
+            <form action="/getFiles?path=${path}&up=0">
+                <select name="mode">
+                    <option value="1">без сортировки</option>
+                    <option value="2">дата: по возрастанию</option>
+                    <option value="3">дата: по убыванию</option>
+                    <option value="4">имя: алфавитный порядок</option>
+                    <option value="5">имя: наоборот</option>
+                    <option value="6">размер: по возрастанию</option>
+                    <option value="7">размер: по убыванию</option>
+                </select>
+                <br>
+                <button type="submit">отсортировать</button>
+            </form>
             <#if listSize == 0>
                 <table>
 

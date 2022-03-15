@@ -70,7 +70,6 @@ public class MainPageController {
     }
 
     public String moveUp(String path) {
-        var splited = path.split("/");
         var mpn = path.lastIndexOf('/');
         var result = path.substring(0, mpn);
         if(result.equals("")){
@@ -78,14 +77,5 @@ public class MainPageController {
         } else {
             return result;
         }
-//        StringBuilder result = new StringBuilder();
-//        for (String s : splited) {
-//            if (s.equals(splited[splited.length - 1])) {
-//                result.append("/");
-//                break;
-//            } else result.append("/").append(s);
-//        }
-//
-//        return result.toString();
     }
 }
