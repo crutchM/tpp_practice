@@ -88,10 +88,10 @@ public class FileController {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("Location", "/getFiles?path=" + folder.getPath()  + folder.getName()
                     + "/" + "&mode=1"+"&up=1");
-            eventLogger.logEvent(Event.level(EventType.INFO).that("directory " + folder.getName() + " successfully added"));
+            //eventLogger.logEvent(Event.level(EventType.INFO).that("directory " + folder.getName() + " successfully added"));
             return new ResponseEntity<>(folder, httpHeaders, HttpStatus.FOUND);
         } catch (IOException e){
-            eventLogger.logEvent(Event.level(EventType.WARN).that("can't create a folder: " + name));
+            //eventLogger.logEvent(Event.level(EventType.WARN).that("can't create a folder: " + name));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
