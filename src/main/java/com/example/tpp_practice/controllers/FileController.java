@@ -28,10 +28,11 @@ public class FileController {
     @Autowired
     private EventLogger eventLogger;
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> download(@PathVariable("id") Long id) throws IOException {
         try {
             Resource file = service.download(id);
+            HttpHeaders headers = new HttpHeaders();
             eventLogger.logEvent(Event.level(EventType.INFO).that("trying to download file"));
             return ResponseEntity.ok().header("Content-Disposition", "attachment;").body(file);
         } catch (IOException e){
@@ -90,17 +91,19 @@ public class FileController {
     }
 
     @PostMapping("/mkdir")
-    public ResponseEntity<FileInfo> mkdir(@RequestParam("name") String name, @RequestParam("path") String path){
+    public RedirectView mkdir(@RequestParam("name") String name, @RequestParam("path") String path){
         try {
             var folder = service.mkdir(path, name);
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add("Location", "/getFiles?path=" + folder.getPath()  + folder.getName()
-                    + "/" + "&mode=1"+"&up=1");
-            //eventLogger.logEvent(Event.level(EventType.INFO).that("directory " + folder.getName() + " successfully added"));
-            return new ResponseEntity<>(folder, httpHeaders, HttpStatus.FOUND);
+            //HttpHeaders httpHeaders = new HttpHeaders();
+           //httpHeaders.add("Location", "/getFiles?path=" + path + "/" + name + "&mode=1"+"&up=1");
+            eventLogger.logEvent(Event.level(EventType.INFO).that("directory " + folder.getName() + " successfully added"));
+            //return new ResponseEntity<>(folder, httpHeaders, HttpStatus.OK);
+
+            return new RedirectView("/getFiles?path=" + folder.getPath()+ folder.getName() + "&mode=1"+"&up=1");
         } catch (IOException e){
-            //eventLogger.logEvent(Event.level(EventType.WARN).that("can't create a folder: " + name));
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            eventLogger.logEvent(Event.level(EventType.WARN).that("can't create a folder: " + name));
+            //return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new RedirectView("/getFiles?path=" + path +"&mode=1&up=1");
         }
     }
 

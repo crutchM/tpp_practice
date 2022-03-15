@@ -43,6 +43,6 @@ public class RegistrationController {
         }
         logger.logEvent(Event.level(EventType.INFO).that("new user successfully added").now());
         service.saveUser(useForm);
-        return "redirect:/getFiles?path=/";
+        return "redirect:/getFiles?path=/&mode=1&up=1";
     }
 }

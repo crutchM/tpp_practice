@@ -15,6 +15,7 @@ public class Event {
     private Event(EventType type) {
         this.eventType = type;
         id = count++;
+        date = new Date();
     }
 
     public static Event level(EventType type) {
@@ -28,7 +29,7 @@ public class Event {
 
     @Override
     public String toString() {
-        return "<" + eventType + "> [ id=" + id + ", date=" + (DateFormat.getDateTimeInstance()).format(date) + ", msg=" + message + " ]";
+        return "<" + eventType + "> [ id=" + id + ", date=" + date.toString() + ", msg=" + message + " ]";
     }
 
     public Event at(Date date) {

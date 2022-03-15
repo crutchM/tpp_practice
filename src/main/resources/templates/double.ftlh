@@ -12,7 +12,9 @@
 
     <div style="display: flex">
         <div style="height: 1000px; width: 500px; background-color: aqua">
-            <form action="/getFiles?path=${path}&up=0">
+            <form action="/getFiles">
+                <input type="hidden" name="path" value="${path}">
+                <input type="hidden" name="up" value="1">
                 <select name="mode">
                     <option value="1">без сортировки</option>
                     <option value="2">дата: по возрастанию</option>

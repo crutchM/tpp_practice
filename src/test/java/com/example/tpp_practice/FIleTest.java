@@ -17,6 +17,7 @@ import java.nio.file.Files;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -29,8 +30,18 @@ public class FIleTest {
     @Autowired
     private MockMvc mockMvc;
 
+    public String uploadAndGetId() throws Exception {
+        MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/upload")
+                .file("attachment", "22222".getBytes(StandardCharsets.UTF_8))
+                .param("name", "t3.txt")
+                .param("path", "/")
+                .param("mode", "1")
+                .with(csrf());
+        var result = mockMvc.perform(mul).andReturn().getResponse().getContentAsString();
+        return result.split(",")[0].split(":")[1];
+    }
     @Test
-    public void sendAndDownLoadFile() throws Exception{
+    public void sendFile() throws Exception{
         MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/upload")
                 .file("attachment", "22222".getBytes(StandardCharsets.UTF_8))
                 .param("name", "t3.txt")
@@ -44,27 +55,44 @@ public class FIleTest {
 
     @Test
     public void downloadFile() throws Exception{
-
-        MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/").requestAttr("id", 4);
+        MockHttpServletRequestBuilder mul2 = multipart("http://localhost:8080/file/"+ uploadAndGetId()).with(csrf());
         this.mockMvc
-                .perform(mul)
+                .perform(mul2)
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(redirectedUrl("http://localhost:8080/getFiles?path=/&mode=1&up=1"));
+                .andExpect(status().isOk());
     }
 
     @Test
     public void deleteFile() throws Exception{
-        MockHttpServletRequestBuilder mul = multipart("/file/35");
-        this.mockMvc.perform(mul).andDo(print()).andExpect(status().isFound()).andExpect(redirectedUrl("http://localhost:8080/getFiles?path = /"));
+        MockHttpServletRequestBuilder mul = multipart("/file/delete/"+uploadAndGetId()).with(csrf());
+        this.mockMvc.perform(mul)
+                .andDo(print())
+                .andExpect(status()
+                        .isFound())
+                .andExpect(redirectedUrl("http://localhost:8080/getFiles?path =/&mode=1&up=1"));
     }
 
     @Test
-    public void loginTest() throws Exception{
-        this.mockMvc.perform(formLogin().user("asd").password("123"))
+    public void mkdir() throws Exception{
+        MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/mkdir")
+                .param("name", "fld")
+                .param("path", "/")
+                .with(csrf());
+        this.mockMvc.perform(mul)
                 .andDo(print())
-                .andExpect(status().isFound());
+                .andExpect(redirectedUrl("/getFiles?path=/fld&mode=1&up=1"));
     }
 
+    @Test
+    public void update() throws Exception{
+        MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/update")
+                .param("id", uploadAndGetId())
+                .param("path", "/")
+                .param("newName", "new")
+                .with(csrf());
+        this.mockMvc.perform(mul)
+                .andDo(print())
+                .andExpect(redirectedUrl("/getFiles?path=/&mode=1&up=1&attribute=redirectWithRedirectView"));
+    }
 
 }
