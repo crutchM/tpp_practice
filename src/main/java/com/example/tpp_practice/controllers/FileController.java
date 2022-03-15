@@ -41,20 +41,28 @@ public class FileController {
     }
 
     @PostMapping("/update")
-    public RedirectView updateFile(@RequestParam("id") Long id, @RequestParam("newName") String newName, @RequestParam("path") String path, RedirectAttributes attrs){
-        var result =service.update(id, newName);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/getFiles?path=" + path + "&mode=1"+"&up=1");
-        eventLogger.logEvent(Event.level(EventType.INFO).that("filename changed"));
-        attrs.addFlashAttribute("flashAttribute", "redirectWithRedirectView");
-        attrs.addAttribute("attribute", "redirectWithRedirectView");
-        return new RedirectView("/getFiles?path=" + path + "&mode=1" + "&up=1");
+    public RedirectView updateFile(@RequestParam("id") Long id, @RequestParam("newName") String newName,
+                                   @RequestParam("path") String path, RedirectAttributes attrs) throws IOException{
+        try {
 
+
+            var result = service.update(id, newName);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", "/getFiles?path=" + path + "&mode=1" + "&up=1");
+            eventLogger.logEvent(Event.level(EventType.INFO).that("filename changed"));
+            attrs.addFlashAttribute("flashAttribute", "redirectWithRedirectView");
+            attrs.addAttribute("attribute", "redirectWithRedirectView");
+            return new RedirectView("/getFiles?path=" + path + "&mode=1" + "&up=1");
+        } catch (IOException e){
+            eventLogger.logEvent(Event.level(EventType.WARN).that("can't change filename"));
+            return new RedirectView("/getFiles?path=" + path + "&mode=1" + "&up=1");
+        }
     }
 
 
     @PostMapping("/upload")
-    public ResponseEntity<FileInfo> upload(@RequestParam MultipartFile attachment, @RequestParam("name") String name, @RequestParam("path") String path, @RequestParam("mode") Integer sortMode){
+    public ResponseEntity<FileInfo> upload(@RequestParam MultipartFile attachment, @RequestParam("name") String name,
+                                           @RequestParam("path") String path, @RequestParam("mode") Integer sortMode){
         try {
             var file =service.upload(attachment, name, path);
             HttpHeaders headers = new HttpHeaders();

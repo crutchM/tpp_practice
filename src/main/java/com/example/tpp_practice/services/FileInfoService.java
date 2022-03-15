@@ -14,5 +14,5 @@ public interface FileInfoService {
     FileInfo mkdir(String path, String name) throws IOException;
     FileInfo delete(Long id) throws IOException;
     List<FileInfo> sortFilesByDate(String path, SortOptions option);
-    FileInfo update(Long id, String newName);
+    FileInfo update(Long id, String newName) throws IOException;
 }

@@ -30,11 +30,12 @@ public class FIleTest {
     private MockMvc mockMvc;
 
     @Test
-    public void sendFile() throws Exception{
+    public void sendAndDownLoadFile() throws Exception{
         MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/upload")
-                .file("test", "22222".getBytes(StandardCharsets.UTF_8))
-//                .param("name", "t3.txt")
+                .file("attachment", "22222".getBytes(StandardCharsets.UTF_8))
+                .param("name", "t3.txt")
                 .param("path", "/")
+                .param("mode", "1")
                 .with(csrf());
         this.mockMvc.perform(mul)
                 .andDo(print())
@@ -43,8 +44,13 @@ public class FIleTest {
 
     @Test
     public void downloadFile() throws Exception{
-        MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/35");
-        this.mockMvc.perform(mul).andDo(print()).andExpect(status().isFound()).andExpect(redirectedUrl("http://localhost:8080/getFiles?path = /"));
+
+        MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/").requestAttr("id", 4);
+        this.mockMvc
+                .perform(mul)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(redirectedUrl("http://localhost:8080/getFiles?path=/&mode=1&up=1"));
     }
 
     @Test

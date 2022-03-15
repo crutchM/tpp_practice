@@ -100,7 +100,7 @@ public FileInfo upload(MultipartFile resource, String name, String path) throws 
     }
 
     @Override
-    public FileInfo update(Long id, String newName) {
+    public FileInfo update(Long id, String newName) throws IOException {
         FileInfo file = repository.findById(id).get();
         File f = new File(root + file.getPath() + file.getName() + '.' + file.getExtension());
         file.setName(newName);
@@ -110,7 +110,7 @@ public FileInfo upload(MultipartFile resource, String name, String path) throws 
             repository.save(file);
             return file;
         } else {
-            return null;
+            throw new IOException();
         }
     }
 
