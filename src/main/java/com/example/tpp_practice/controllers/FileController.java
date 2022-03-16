@@ -102,7 +102,7 @@ public class FileController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public ResponseEntity<FileInfo> delete(@PathVariable("id") Long id){
         try {
             var file = service.delete(id);

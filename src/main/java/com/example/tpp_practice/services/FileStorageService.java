@@ -19,22 +19,21 @@ import java.util.Collections;
 import java.util.List;
 @Service
 public class FileStorageService implements FileInfoService{
-   // private static final String root= "/home/crutchm/tpp_practice/src/main/resources/stash";
-    private static final String root ="C:\\Users\\sads1\\Desktop\\tpp_practice\\src\\main\\resources\\stash";
+    public static String root= "/home/crutchm/tpp_practice/src/main/resources/stash";
+   // private static final String root ="C:\\Users\\sads1\\Desktop\\tpp_practice\\src\\main\\resources\\stash";
     @Autowired
     FileInfoRepository repository;
 
 @Override
 public FileInfo upload(MultipartFile resource, String name, String path) throws IOException {
-        System.out.println("ошибка здесь");
         FileInfo newFile = new FileInfo(getName(name), path, getExtension(name), resource.getSize());
         var up = repository.save(newFile);
         FileOutputStream out = null;
         try {
             if(path.equals("/")) {
-                out = new FileOutputStream((root + path + up.getName() +'.'+ up.getExtension()).replace('/', '\\'));
+                out = new FileOutputStream((root + path + up.getName() +'.'+ up.getExtension()));
             } else {
-                out = new FileOutputStream((root + path + '/' + up.getName() +'.'+ up.getExtension()).replace('/', '\\'));
+                out = new FileOutputStream((root + path + '/' + up.getName() +'.'+ up.getExtension()));
             }
             out.write(resource.getBytes());
         } finally {

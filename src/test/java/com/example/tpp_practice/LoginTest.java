@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import com.example.tpp_practice.model.User;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
@@ -46,4 +47,10 @@ public class LoginTest {
 //                .andDo(print())
 //                .andExpect(redirectedUrl("/getFiles?path=/&mode=1&up=1"));
 //    }
+    @Test
+    public void testReg() throws Exception {
+        this.mockMvc.perform(post("/reg")
+                .param("username", "test_user")
+        );
+    }
 }
