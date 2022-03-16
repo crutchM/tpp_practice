@@ -95,7 +95,7 @@
                     <br>
                     <a>вы можете перемщать файл только на уровень выше/ниже, если хотите подняться наверх укажите up</a>
                     <br>
-                    <input type="text" name="path">
+                    <input type="text" name="dir">
                     <br>
                     <button type="submit">move</button>
                 </form>

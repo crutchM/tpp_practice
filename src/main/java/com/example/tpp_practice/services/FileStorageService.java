@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.List;
 @Service
 public class FileStorageService implements FileInfoService{
-    private static final String root= "/home/crutchm/tpp_practice/src/main/resources/stash";
-
+   // private static final String root= "/home/crutchm/tpp_practice/src/main/resources/stash";
+    private static final String root ="C:\\Users\\sads1\\Desktop\\tpp_practice\\src\\main\\resources\\stash";
     @Autowired
     FileInfoRepository repository;
 
@@ -32,13 +32,17 @@ public FileInfo upload(MultipartFile resource, String name, String path) throws 
         FileOutputStream out = null;
         try {
             if(path.equals("/")) {
-                out = new FileOutputStream(root + path + up.getName() +'.'+ up.getExtension());
+                out = new FileOutputStream((root + path + up.getName() +'.'+ up.getExtension()).replace('/', '\\'));
             } else {
-                out = new FileOutputStream(root + path + '/' + up.getName() +'.'+ up.getExtension());
+                out = new FileOutputStream((root + path + '/' + up.getName() +'.'+ up.getExtension()).replace('/', '\\'));
             }
             out.write(resource.getBytes());
         } finally {
-            out.close();
+            if(out == null){
+                throw new IOException();
+            } else {
+                out.close();
+            }
         }
         return up;
 }
@@ -64,7 +68,7 @@ public FileInfo upload(MultipartFile resource, String name, String path) throws 
     public FileInfo mkdir(String path, String name) throws IOException {
         FileInfo info = new FileInfo(name, path, "folder", 0);
         var file = repository.save(info);
-        Files.createDirectory(Path.of(root + path + name));
+        Files.createDirectory(Path.of(root + path + "/" + name));
         return file;
     }
 
@@ -118,22 +122,29 @@ public FileInfo upload(MultipartFile resource, String name, String path) throws 
     @Override
     public FileInfo move(Long id, String dest) throws IOException {
         var file = repository.findById(id).get();
-        Path result = null;
-        if (file.getPath().equals("/")){
+
+        if (file.getPath().equals("/") && dest.equals("/")){
             throw new IOException();
         }
         try {
-            result = Files.move(Paths.get(root + "/" + file.getPath() + file.getName() + "." + file.getExtension()),
-                    Paths.get(root + "/" + dest + file.getName() + "." + file.getExtension()));
+            Path result = null;
+            var path = "";
+            if(dest.equals("/")){
+                path = root + dest + file.getName() + "." + file.getExtension();
+            } else {
+                path = root  + "/" + dest + "/" + file.getName() + "." + file.getExtension();
+            }
+
+            result = Files.move(Paths.get(root + file.getPath() + "/" + file.getName() + "." +  file.getExtension()), Paths.get(path));
+            file.setPath("/" + dest);
+            if(result != null){
+                repository.deleteById(file.getId());
+                repository.save(file);
+                return file;
+            } else {
+                throw new IOException();
+            }
         } catch (IOException e){
-            throw new IOException();
-        }
-        if(result != null){
-            repository.deleteById(file.getId());
-            file.setPath(dest);
-            repository.save(file);
-            return file;
-        } else {
             throw new IOException();
         }
     }

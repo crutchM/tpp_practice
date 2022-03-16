@@ -96,7 +96,9 @@ public class FileController {
             return new ResponseEntity<>(file, headers, HttpStatus.FOUND);
         } catch (IOException e){
             eventLogger.logEvent(Event.level(EventType.WARN).that("/upload: can't upload a file"));
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", "/getFiles?path=" + path + "&mode=" + sortMode+"&up=1");
+            return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
         }
     }
 

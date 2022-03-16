@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-
+import com.example.tpp_practice.model.User;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,10 +35,11 @@ public class LoginTest {
 
 //    @Test
 //    public void testReg() throws Exception{
-//
+//        var user = new User();
+//        user.setUsername("1234");
+//        user.setPassword("1234");
 //        MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/reg")
-//                .param("username", "1234")
-//                .param("password", "1234")
+//                .param("useForm")
 //                .with(csrf());
 //
 //        mockMvc.perform(mul)

@@ -41,7 +41,7 @@ public class FIleTest {
         return result.split(",")[0].split(":")[1];
     }
     @Test
-    public void sendFile() throws Exception{
+    public void testSendFile() throws Exception{
         MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/upload")
                 .file("attachment", "22222".getBytes(StandardCharsets.UTF_8))
                 .param("name", "t3.txt")
@@ -54,8 +54,9 @@ public class FIleTest {
     }
 
     @Test
-    public void downloadFile() throws Exception{
-        MockHttpServletRequestBuilder mul2 = multipart("http://localhost:8080/file/"+ uploadAndGetId()).with(csrf());
+    public void testDownloadFile() throws Exception{
+        MockHttpServletRequestBuilder mul2 = multipart("http://localhost:8080/file/"
+                + uploadAndGetId()).with(csrf());
         this.mockMvc
                 .perform(mul2)
                 .andDo(print())
@@ -63,7 +64,7 @@ public class FIleTest {
     }
 
     @Test
-    public void deleteFile() throws Exception{
+    public void testDeleteFile() throws Exception{
         MockHttpServletRequestBuilder mul = multipart("/file/delete/"+uploadAndGetId()).with(csrf());
         this.mockMvc.perform(mul)
                 .andDo(print())
@@ -73,7 +74,7 @@ public class FIleTest {
     }
 
     @Test
-    public void mkdir() throws Exception{
+    public void testMkdir() throws Exception{
         MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/mkdir")
                 .param("name", "fld")
                 .param("path", "/")
@@ -85,7 +86,7 @@ public class FIleTest {
     }
 
     @Test
-    public void update() throws Exception{
+    public void testUpdate() throws Exception{
         MockHttpServletRequestBuilder mul = multipart("http://localhost:8080/file/update")
                 .param("id", uploadAndGetId())
                 .param("path", "/")
