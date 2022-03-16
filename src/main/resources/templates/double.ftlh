@@ -11,7 +11,7 @@
     </#if>
 
     <div style="display: flex">
-        <div style="width: 500px; background-color: aqua">
+        <div style="height: 4000px; width: 500px; background-color: aqua">
             <form action="/getFiles">
                 <input type="hidden" name="path" value="${path}">
                 <input type="hidden" name="up" value="1">
@@ -81,7 +81,11 @@
             <div style="padding-left: 20px">
                 <br>
                 <form action="/file/update" method="post">
+                    <a>укажите id файла</a>
+                    <br>
                     <input type="number" name="id">
+                    <br>
+                    <a>укажите новое имя(без расширения)</a>
                     <br>
                     <input type="text" name="newName">
                     <input type="hidden" name="path" value="${path}">
@@ -89,8 +93,11 @@
                     <br>
                     <button type="submit">update chosen file</button>
                 </form>
+                <br>
                 <form action="/file/move" method="post">
                     <input type="hidden" name="_csrf" value="${_csrf.token}">
+                    <a>укажите id файла</a>
+                    <br>
                     <input type="number" name="id">
                     <br>
                     <a>вы можете перемщать файл только на уровень выше/ниже, если хотите подняться наверх укажите up</a>

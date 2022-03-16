@@ -98,4 +98,21 @@ public class FIleTest {
                 .andExpect(redirectedUrl("/getFiles?path=/&mode=1&up=1&attribute=redirectWithRedirectView"));
     }
 
+    @Test
+    public void testMoveFile() throws Exception {
+        MockHttpServletRequestBuilder mul1 = multipart("http://localhost:8080/file/mkdir")
+                .param("name", "movingFolder")
+                .param("path", "/")
+                .with(csrf());
+        mockMvc.perform(mul1);
+        MockHttpServletRequestBuilder mul2 = multipart("http://localhost:8080/file/move")
+                .param("id", uploadAndGetId())
+                .param("dir", "movingFolder")
+                .with(csrf());
+        mockMvc.perform(mul2)
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/getFiles?path=/fld&mode=1&up=1"));
+    }
+
 }
