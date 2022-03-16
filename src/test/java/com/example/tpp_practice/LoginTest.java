@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -47,10 +48,14 @@ public class LoginTest {
 //                .andDo(print())
 //                .andExpect(redirectedUrl("/getFiles?path=/&mode=1&up=1"));
 //    }
-    @Test
-    public void testReg() throws Exception {
-        this.mockMvc.perform(post("/reg")
-                .param("username", "test_user")
-        );
-    }
+//    @Test
+//    public void testReg() throws Exception {
+//        User form = new User();
+//        this.mockMvc.perform(post("/reg")
+//                .param("username", "test_user")
+//                .param("password", "123")
+//                .flashAttr("useForm", form).with(csrf()))
+//
+//                .andExpect(redirectedUrl("/getFiles?path=/&mode=1&up=1)"));
+//    }
 }
